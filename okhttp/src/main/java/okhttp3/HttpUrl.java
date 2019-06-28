@@ -15,6 +15,7 @@
  */
 package okhttp3;
 
+import java.io.EOFException;
 import java.net.InetAddress;
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -1731,7 +1732,12 @@ public final class HttpUrl {
         }
 
         while (!encodedCharBuffer.exhausted()) {
-          int b = encodedCharBuffer.readByte() & 0xff;
+          int b = 0;
+          try {
+            b = encodedCharBuffer.readByte() & 0xff;
+          } catch (EOFException e) {
+            e.printStackTrace();
+          }
           out.writeByte('%');
           out.writeByte(HEX_DIGITS[(b >> 4) & 0xf]);
           out.writeByte(HEX_DIGITS[b & 0xf]);

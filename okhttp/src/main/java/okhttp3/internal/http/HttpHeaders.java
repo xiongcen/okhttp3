@@ -242,10 +242,18 @@ public final class HttpHeaders {
     while (!buffer.exhausted()) {
       byte b = buffer.getByte(0);
       if (b == ',') {
-        buffer.readByte(); // Consume ','.
+        try {
+          buffer.readByte(); // Consume ','.
+        } catch (EOFException e) {
+          e.printStackTrace();
+        }
         commaFound = true;
       } else if (b == ' ' || b == '\t') {
-        buffer.readByte(); // Consume space or tab.
+        try {
+          buffer.readByte(); // Consume space or tab.
+        } catch (EOFException e) {
+          e.printStackTrace();
+        }
       } else {
         break;
       }
@@ -257,7 +265,11 @@ public final class HttpHeaders {
     int count = 0;
     while (!buffer.exhausted() && buffer.getByte(0) == b) {
       count++;
-      buffer.readByte();
+      try {
+        buffer.readByte();
+      } catch (EOFException e) {
+        e.printStackTrace();
+      }
     }
     return count;
   }
@@ -268,7 +280,11 @@ public final class HttpHeaders {
    * double-quoted string.
    */
   private static String readQuotedString(Buffer buffer) {
-    if (buffer.readByte() != '\"') throw new IllegalArgumentException();
+    try {
+      if (buffer.readByte() != '\"') throw new IllegalArgumentException();
+    } catch (EOFException e) {
+      e.printStackTrace();
+    }
     Buffer result = new Buffer();
     while (true) {
       long i = buffer.indexOfElement(QUOTED_STRING_DELIMITERS);
@@ -276,13 +292,21 @@ public final class HttpHeaders {
 
       if (buffer.getByte(i) == '"') {
         result.write(buffer, i);
-        buffer.readByte(); // Consume '"'.
+        try {
+          buffer.readByte(); // Consume '"'.
+        } catch (EOFException e) {
+          e.printStackTrace();
+        }
         return result.readUtf8();
       }
 
       if (buffer.size() == i + 1L) return null; // Dangling escape.
       result.write(buffer, i);
-      buffer.readByte(); // Consume '\'.
+      try {
+        buffer.readByte(); // Consume '\'.
+      } catch (EOFException e) {
+        e.printStackTrace();
+      }
       result.write(buffer, 1L); // The escaped character.
     }
   }
