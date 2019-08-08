@@ -244,14 +244,14 @@ public final class HttpHeaders {
       if (b == ',') {
         try {
           buffer.readByte(); // Consume ','.
-        } catch (EOFException e) {
+        } catch (Exception e) {
           e.printStackTrace();
         }
         commaFound = true;
       } else if (b == ' ' || b == '\t') {
         try {
           buffer.readByte(); // Consume space or tab.
-        } catch (EOFException e) {
+        } catch (Exception e) {
           e.printStackTrace();
         }
       } else {
@@ -267,7 +267,7 @@ public final class HttpHeaders {
       count++;
       try {
         buffer.readByte();
-      } catch (EOFException e) {
+      } catch (Exception e) {
         e.printStackTrace();
       }
     }
@@ -282,7 +282,7 @@ public final class HttpHeaders {
   private static String readQuotedString(Buffer buffer) {
     try {
       if (buffer.readByte() != '\"') throw new IllegalArgumentException();
-    } catch (EOFException e) {
+    } catch (Exception e) {
       e.printStackTrace();
     }
     Buffer result = new Buffer();
@@ -294,7 +294,7 @@ public final class HttpHeaders {
         result.write(buffer, i);
         try {
           buffer.readByte(); // Consume '"'.
-        } catch (EOFException e) {
+        } catch (Exception e) {
           e.printStackTrace();
         }
         return result.readUtf8();
@@ -304,7 +304,7 @@ public final class HttpHeaders {
       result.write(buffer, i);
       try {
         buffer.readByte(); // Consume '\'.
-      } catch (EOFException e) {
+      } catch (Exception e) {
         e.printStackTrace();
       }
       result.write(buffer, 1L); // The escaped character.

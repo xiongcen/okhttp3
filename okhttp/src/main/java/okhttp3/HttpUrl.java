@@ -1735,7 +1735,7 @@ public final class HttpUrl {
           int b = 0;
           try {
             b = encodedCharBuffer.readByte() & 0xff;
-          } catch (EOFException e) {
+          } catch (Exception e) {
             e.printStackTrace();
           }
           out.writeByte('%');
